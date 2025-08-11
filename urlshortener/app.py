@@ -421,4 +421,4 @@ if __name__ == "__main__":
     # Ensure DB exists
     if not DB_PATH.exists():
         DB_PATH.write_text("{}", "utf-8")
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
