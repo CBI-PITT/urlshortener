@@ -1,6 +1,6 @@
 # urlshortener
 
-## We python and flask-based web tool for shortening urls
+## Python flask-based web tool for shortening urls
 
 #### Installing:
 
