@@ -50,6 +50,8 @@ from flask import (
     url_for,
 )
 
+from werkzeug.middleware.proxy_fix import ProxyFix
+
 APP_TITLE = "MiniShort — simple URL shortener"
 DB_PATH = Path(os.environ.get("URL_DB_PATH", "url_db.json"))
 BASE_URL = os.environ.get("BASE_URL")  # Optional: e.g., https://sho.rt
@@ -58,6 +60,28 @@ ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN")  # Required to access /admin
 
 # --- App setup ---
 app = Flask(__name__)
+
+# Allow it to take headers from NGINX if site lives under a different endpoint
+
+# ... after creating app
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+
+# honor X-Script-Name sent by nginx so url_for gets the /short prefix
+class ReverseProxied:
+    def __init__(self, app):
+        self.app = app
+    def __call__(self, environ, start_response):
+        script_name = environ.get('HTTP_X_SCRIPT_NAME', '')
+        if script_name:
+            environ['SCRIPT_NAME'] = script_name
+            path_info = environ.get('PATH_INFO', '')
+            if path_info.startswith(script_name):
+                environ['PATH_INFO'] = path_info[len(script_name):] or '/'
+        return self.app(environ, start_response)
+
+app.wsgi_app = ReverseProxied(app.wsgi_app)
+
+
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", secrets.token_urlsafe(32))
 _lock = threading.Lock()
 
