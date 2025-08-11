@@ -1,48 +1,53 @@
-# holis_tools
+# urlshortener
 
-## This repository offers tools to deal with access to holis_data
+## We python and flask-based web tool for shortening urls
 
 #### Installing:
 
 ```bash
 # Clone the repo
 cd /dir/of/choice
-git clone https://github.com/CBI-PITT/holis_tools.git
+git clone https://github.com/CBI-PITT/urlshortener.git
 
 # Create a virtual environment
 # This assumes that you have miniconda or anaconda installed
-conda create -n holis_tools python=3.12 -y
+conda create -n urlshortener python=3.12 -y
 
 # Activate environment and install zarr_stores
-conda activate holis_tools
-pip install -e /dir/of/choice/holis_tools
+conda activate urlshortener
+pip install -e /dir/of/choice/urlshortener
+```
+
+#### Set Custom options:
+
+```bash
+# .env.example
+# Copy this file to .env and update the values as needed.
+
+# Flask secret key for session cookies (generate with: python -c "import secrets; print(secrets.token_urlsafe(32))")
+FLASK_SECRET_KEY=your_flask_secret_here
+
+# Optional: Base URL for shortened links (e.g., https://sho.rt). If empty, uses request.host_url.
+BASE_URL=
+
+# Optional: Google Analytics Measurement ID (e.g., G-XXXXXXXXXX). If set, clicks on short links will trigger GA events.
+GTAG_ID=
+
+# Path to the JSON file used to store shortened link data.
+URL_DB_PATH=url_db.json
+
+# Admin token required to access /admin (choose a long, random string)
+ADMIN_TOKEN=change-me
 ```
 
 
 
-##### <u>spool_reader:</u>
+#### Run the web app:
 
-###### Description:
+```bash
+conda activate urlshortener
+python /dir/of/choice/urlshortener/urlshortener/app.py
 
-This tool enables a .zip file containing a collection of spools files that represents 1 yz strip to be read and formatted as numpy array(s) for downstream processing. Currently the package assumes that the zip file is formatted according to the compression_tools library found here: https://github.com/CBI-PITT/compression_tools/tree/main/compression_tools
-
-###### Usage example:
-
-```python
-from compression_tools.alt_zip import alt_zip
-from holis_tool.spool_reader import spool_set_interpreter
-import numpy as np
-
-# Location of zip file contatining spool files
-test_spool_zip = r'/zip/file/writted/using/compression_tools/containing/spool/files.zip'
-
-# Instantiate class to manage spool files
-a = spool_set_interpreter(test_spool_zip)
-
-# Extract the 100th spool file only
-hundredth_spool_file = a[100]
-
-# assemble all spool files into a complete acquisition strip
-b = a.assemble()
+# Access via: http://localhost:5000
 ```
 

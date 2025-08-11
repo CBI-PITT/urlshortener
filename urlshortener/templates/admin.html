@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Admin</h1>
+  <p class="muted">Total: {{ total }} • Active: {{ active }} • Expired: {{ expired }}</p>
+  <form method="get" style="margin:12px 0; display:flex; gap:8px;">
+    <input type="text" name="q" placeholder="Search slug or target" value="{{ q }}" style="flex:1">
+    <button type="submit">Search</button>
+    <a class="btn secondary" href="{{ url_for('admin_index') }}">Clear</a>
+  </form>
+
+  <div style="overflow:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>Slug</th>
+          <th>Target</th>
+          <th>Created</th>
+          <th>Expires</th>
+          <th>Clicks</th>
+          <th>Last access</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in items %}
+        <tr>
+          <td><code>{{ r.slug or r['slug'] }}</code></td>
+          <td style="max-width:520px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+            <a href="{{ r['target'] }}" target="_blank">{{ r['target'] }}</a>
+          </td>
+          <td><small>{{ r['created_at'] }}</small></td>
+          <td><small>{{ r['expires_at'] or '—' }}</small></td>
+          <td>{{ r['clicks'] }}</td>
+          <td><small>{{ r['last_access'] or '—' }}</small></td>
+          <td style="white-space:nowrap;">
+            <a class="btn secondary" href="{{ url_for('admin_impersonate', slug=r['slug']) }}">Manage</a>
+            <form style="display:inline;" method="post" action="{{ url_for('admin_delete', slug=r['slug']) }}" onsubmit="return confirm('Delete {{ r['slug'] }}?');">
+              <button class="btn danger" type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7">No links found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <p class="muted" style="margin-top:12px;">Tip: bookmark <code>{{ url_for('admin_index', _external=True) }}</code>. Supply your token once via <code>?token=YOUR_TOKEN</code> to start a session.</p>
+{% endblock %}

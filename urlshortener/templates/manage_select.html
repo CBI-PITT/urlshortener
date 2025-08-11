@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Manage a link</h1>
+  <p class="muted">Enter your slug and secret editing key to edit or delete the link.</p>
+  <form method="get">
+    <div class="row">
+      <div>
+        <label for="slug">Slug</label>
+        <input type="text" name="slug" id="slug" value="{{ slug or '' }}" placeholder="e.g. launch-day" required>
+      </div>
+      <div>
+        <label for="key">Secret key</label>
+        <input type="text" name="key" id="key" value="{{ key or '' }}" placeholder="(saved when you created the link)" required>
+      </div>
+    </div>
+    <div class="btns"><button type="submit">Continue</button> <a class="btn secondary" href="{{ url_for('index') }}">Back</a></div>
+  </form>
+{% endblock %}

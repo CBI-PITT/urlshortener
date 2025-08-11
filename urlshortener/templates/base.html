@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }}</title>
+  <style>
+    :root { --bg:#0b1021; --card:#121935; --ink:#e6e8f2; --muted:#96a0bf; --accent:#8fb6ff; --danger:#ff6b6b; }
+    html, body { height:100%; }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--ink); }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 24px; }
+    .card { background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
+    h1 { font-size: clamp(24px, 2.6vw, 36px); margin: 0 0 12px; }
+    p.muted { color: var(--muted); margin-top: 0; }
+    form { display: grid; gap: 12px; }
+    label { font-weight: 600; font-size: 14px; }
+    input[type=text], input[type=url], input[type=datetime-local], input[type=date], input[type=time], input[type=password] { width: 100%; padding: 12px 14px; background: #0e1430; color: var(--ink); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; }
+    .row { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+    .btns { display: flex; gap: 8px; align-items: center; }
+    button, .btn { background: var(--accent); color: #06122e; font-weight: 700; border: 0; padding: 10px 14px; border-radius: 10px; cursor: pointer; }
+    .btn.secondary { background: #2a3667; color: var(--ink); font-weight: 600; }
+    .btn.danger { background: var(--danger); color: #2a0b0b; }
+    .flash { margin: 12px 0; padding: 12px 14px; border-radius: 10px; background: #1a2248; border: 1px solid rgba(255,255,255,0.08); }
+    code { background: #0e1430; padding: 2px 6px; border-radius: 6px; }
+    .list { margin-top: 24px; }
+    .item { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 12px; background:#0e1430; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; }
+    .pill { font-size: 12px; padding: 4px 8px; border-radius: 99px; background:#1a2248; color: var(--muted); border: 1px solid rgba(255,255,255,0.08); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    th { color: var(--muted); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}
+        {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </div>
+    <footer>
+      <p>Built with Flask. Keep it friendly: no spam, phishing, or malware. Links may expire or be disabled at any time.</p>
+    </footer>
+  </div>
+</body>
+</html>

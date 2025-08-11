@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Not found</h1>
+  <p class="muted">We don't have a link for that slug. Double‑check the URL or create a new one.</p>
+  <div class="btns"><a class="btn" href="{{ url_for('index') }}">Create a short link</a></div>
+{% endblock %}

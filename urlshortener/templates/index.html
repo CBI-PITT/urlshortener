@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>{{ app_title }}</h1>
+  <p class="muted">Create a short link with an optional custom slug and expiration.</p>
+  <form method="post" action="{{ url_for('create') }}">
+    <label for="target">Target URL</label>
+    <input type="url" required name="target" id="target" placeholder="https://example.com/very/long/url" value="{{ request.form.get('target','') }}">
+
+    <div class="row">
+      <div>
+        <label for="slug">Custom slug (optional)</label>
+        <input type="text" name="slug" id="slug" placeholder="e.g. launch-day" value="{{ request.form.get('slug','') }}">
+      </div>
+      <div>
+        <label>Expiration</label>
+        <label style="display:flex;gap:8px;align-items:center;">
+          <input type="checkbox" id="never_expires" name="never_expires" value="1" {% if not request.form.get('expires_date') and not request.form.get('expires_time') %}checked{% endif %}> Never expires
+        </label>
+        <input type="date" name="expires_date" id="expires_date" value="{{ request.form.get('expires_date','') }}" {% if not request.form.get('expires_date') and not request.form.get('expires_time') %}disabled{% endif %}>
+        <input type="time" name="expires_time" id="expires_time" value="{{ request.form.get('expires_time','00:00') }}" {% if not request.form.get('expires_date') and not request.form.get('expires_time') %}disabled{% endif %}>
+        <p class="muted" style="margin:.25rem 0 0;">Leave blank or keep "Never expires" checked for links that never expire.</p>
+        <script>
+          const cb=document.getElementById('never_expires');
+          const ed=document.getElementById('expires_date');
+          const et=document.getElementById('expires_time');
+          if(cb&&ed&&et){cb.addEventListener('change',()=>{ed.disabled=et.disabled=cb.checked; if(cb.checked){ed.value='';et.value='00:00';}});}
+        </script>
+      </div>
+    </div>
+
+    <div class="btns">
+      <button type="submit">Create short link</button>
+      <a class="btn secondary" href="{{ url_for('manage') }}">Manage a link</a>
+      {% if ADMIN_TOKEN %}<a class="btn secondary" href="{{ url_for('admin_index', token='redact') }}" onclick="this.href=this.href.replace('redact', prompt('Admin token?')||'');">Admin</a>{% endif %}
+    </div>
+  </form>
+
+  {% if created %}
+    <div class="list">
+      <div class="item">
+        <div>
+          <div><strong>Your new link:</strong> <a href="{{ created['full_url'] }}">{{ created['full_url'] }}</a></div>
+          <div class="muted">Target: <code>{{ created['target'] }}</code></div>
+          <div class="muted">Secret key (save this to edit): <code>{{ created['secret'] }}</code></div>
+          {% if created['expires_at'] %}<div class="pill">Expires: {{ created['expires_at'] }}</div>{% else %}<div class="pill">No expiration</div>{% endif %}
+        </div>
+        <a class="btn" href="{{ url_for('manage', slug=created['slug'], key=created['secret']) }}">Edit</a>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
